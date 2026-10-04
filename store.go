@@ -3,14 +3,20 @@ package main
 import (
 	"errors"
 	"fmt"
+	//using the base64 encoding library
+	"encoding/base64"
 )
 
 //not all variables are pointers but all pointers are variables
 //pointers are variables that store the memory address of another variables
 
 type Store struct {
-	data map[string]string
+	data 	map[string]string
+	maxSize int
 }
+
+var ErrEmptyKey = errors.New("No Keys are found")
+var ErrLimitExceeded = errors.New("Max limit exceeded")
 
 func (s *Store) Keys() []string {
 	//here we create an emoty slice with the capacity of the length of our data
@@ -32,6 +38,7 @@ func (s *Store) Rename(oldKey, newKey string) {
 }
 
 func (s *Store) Pop(key string) (string, bool) {
+
 	value, exists := s.data[key]
 	delete(s.data, key)
 	if exists {
@@ -40,13 +47,26 @@ func (s *Store) Pop(key string) (string, bool) {
 	return "", false
 }
 
-func (s *Store) Set(key, value string) *Store {
+func (s *Store) Set(key, value string) error {
+	if key == "" {
+		return ErrEmptyKey
+	}
+
+	//if the value does not exists, then it is a new value
+	_, exists := s.data[key]
+
+	//we are at capacity and is this a new key
+	if s.maxSize > 0 && s.Len() >= s.maxSize && !exists {
+		return fmt.Errorf("Set Key: (%s) - %w", key, ErrLimitExceeded)
+	}
 	s.data[key] = value
-	return s
+	return nil
 }
 
 func (s *Store) Get(key string) (string, error) {
-	fmt.Println(s.data)
+	if key == "" {
+		return "", ErrEmptyKey
+	}
 	value, exists := s.data[key]
 	if !exists {
 		return "", errors.New("Something went wrong")
@@ -65,13 +85,21 @@ func (s *Store) Len() (int) {
 	return len(s.data)	
 }
 
+func (s *Store) SetKeyWithEncryption(key, val string) (string, error) {
+	encoded := base64.StdEncoding.EncodeToString([]byte(val))
+	if err := s.Set(key, encoded); err != nil {
+		return "", err
+	}
+	return s.Get(key)
+}
 
-func NewStore() *Store {
+func NewStore(maxSize int) *Store {
 
-	fmt.Println("GoKV - Go key value store project")
+	fmt.Println("GoKV - Go key value store project", maxSize)
 
 	s := Store{
 		data: map[string]string{},
+		maxSize: maxSize,
 	}
 	
 	return &s

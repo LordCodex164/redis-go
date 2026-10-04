@@ -1,27 +1,43 @@
 package main
 
-import "fmt"
-
-
+import (
+	"errors"
+	"fmt"
+)
 
 //keys return every key currently in the store, sorted alphabetically
  
+var ErrKeyDoesNotExist = errors.New("key does not exist")
 
 func main() {
 
-	s := NewStore()
+	s := NewStore(2)
 
-	newS := s.Set("social", "x")
+	s.Set("social", "x")
+	s.Set("meal", "rice")
+	
+	err := s.Set("sport", "football")
 
-	fmt.Println("store", newS)
-
-	if val, err := s.Get("social"); err != nil {
-		fmt.Println("val", val)
+	if err != nil {
+		if errors.Is(err, ErrKeyDoesNotExist) {
+			return
+		}
+		//500
+		fmt.Println(err)
 	}
 
-	new_s := s.Delete("social")
+	val, err := s.Get("social")
 
-	fmt.Println("new_s", new_s)
+	if err != nil {
+		fmt.Println("val", val)
+		if errors.Is(err, ErrKeyDoesNotExist) {
+			return
+		}
+		//500
+		fmt.Println(err)
+	}
+
+	s.Delete("social")
 
 	m := map[string]string{
 		"age": "40",
@@ -31,6 +47,4 @@ func main() {
 	m["age"] = "50"
 
 	m["role"] = "engineer"
-
-	fmt.Println(m)
 }

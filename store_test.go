@@ -7,7 +7,7 @@ import (
 )
 
 func TestKeys_ReturnsAllKeysSorted(t *testing.T) {
-	store := NewStore()
+	store := NewStore(2)
 	store.Set("charlie", "3")
 	store.Set("james", "1")
 	store.Set("bravo", "2")
@@ -22,7 +22,7 @@ func TestKeys_ReturnsAllKeysSorted(t *testing.T) {
 
 func TestKeys_EmptyStore(t *testing.T) {
 
-	store := NewStore()
+	store := NewStore(2)
 
 	got := store.Keys()
 
@@ -47,7 +47,7 @@ func TestSetGet_RoundTrip(t *testing.T) {
 	//1. Make a NewStore.
 	//2. Set("hello", "world")
 
-	store := NewStore()
+	store := NewStore(2)
 
 	store.Set("hello", "world")
 
@@ -76,7 +76,7 @@ func TestDeleteExistingKey(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			store := NewStore()
+			store := NewStore(2)
 			for k, v := range tc.setup {
 				store.Set(k, v)
 				fmt.Println("key", tc.deleteKey)
@@ -95,7 +95,7 @@ type test struct {
 }
 
 func TestRenameKey(t *testing.T) {
-	store := NewStore()
+	store := NewStore(2)
 
 	tests := []struct{
 		name 		string
@@ -108,7 +108,7 @@ func TestRenameKey(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			store := NewStore()
+			store := NewStore(2)
 
 			for k, v := range test.obj {
 				store.Set(k, v)
