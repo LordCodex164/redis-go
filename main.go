@@ -9,18 +9,19 @@ import (
 )
 
 //keys return every key currently in the store, sorted alphabetically
-
 var ErrKeyDoesNotExist = errors.New("key does not exist")
 var ErrEmptyKey = errors.New("No Keys are found")
 var ErrLimitExceeded = errors.New("Max limit exceeded")
 
+
 func main() {
 
-	s := CreateStore()
+	s, m := CreateStore()
 
 	s.Set("social", "x")
+	m.Set("social", "x")
 	s.Set("meal", "rice")
-
+	m.Set("meal", "rice")
 	err := s.Set("sport", "football")
 
 	if err != nil {
@@ -30,28 +31,8 @@ func main() {
 		//500
 		fmt.Println(err)
 	}
-
-	// val, err := s.Get("social")
-
-	// if err != nil {
-	// 	fmt.Println("val", val)
-	// 	if errors.Is(err, ErrKeyDoesNotExist) {
-	// 		return
-	// 	}
-	// 	//500
-	// 	fmt.Println(err)
-	// }
-
-	// s.Delete("social")
-
-	// m := map[string]string{
-	// 	"age": "40",
-	// 	"name": "isaac",
-	// }
-
-	// m["age"] = "50"
-
-	// m["role"] = "engineer"
+	m.Get("meal")
+	//m.Get("meal")
 
 	encrypted, err := SetKeyWithEncryption(s, "a", "classist_conservative")
 
@@ -62,25 +43,14 @@ func main() {
 
 	fmt.Println(encrypted)
 
-	//ttlStore := NewTTlStore(3)
-
-	// encryptedTtlValue, err := SetKeyWithEncryption(*ttlStore, "a", "classist_conservative")
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// fmt.Println(encryptedTtlValue)
-
+	m.Report()
 }
 
-func CreateStore() *LoggingMiddleware {
+func CreateStore() (*LoggingMiddleware, *MetricsMiddleware) {
 	plain := kv.NewStore(4)
 	logger := NewLoggingMiddleware(plain)
 	metrics := NewMetricsMiddleware(plain)
-	return logger
-
+	return logger, metrics
 }
 
 func SetKeyWithEncryption(store Store.IStore, key, val string) (string, error) {
@@ -89,6 +59,6 @@ func SetKeyWithEncryption(store Store.IStore, key, val string) (string, error) {
 	if err := store.Set(key, encoded); err != nil {
 		return "", err
 	}
-
 	return store.Get(key)
 }
+

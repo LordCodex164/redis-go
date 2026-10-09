@@ -55,7 +55,7 @@ func (s *Store) Set(key, value string) error {
 
 	//we are at capacity and is this a new key
 	if s.maxSize > 0 && s.Len() >= s.maxSize && !exists {
-		return fmt.Errorf("Set Key: (%s) - %w, key, limit exceeded")
+		return fmt.Errorf("Set Key: (%s) - %w, key, limit exceeded", key, value)
 	}
 	s.data[key] = value
 	return nil

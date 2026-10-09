@@ -10,9 +10,7 @@ func TestTTLStore_GetAfterExpiry(t *testing.T) {
 	//the ttl is the time it takes for the key to expire
 
 	s := NewTTlStore(50 * time.Millisecond)
-
 	s.Set("k", "v")
-
 	time.Sleep(100 * time.Millisecond)
 
 	_, err := s.Get("k")

@@ -37,9 +37,9 @@ func (l *LoggingMiddleware) Get(key string) (string, error) {
 	l.logger.Printf("Get %q", key) //we perform side effect by just logging
 	val, err := l.innerStorer.Get(key)
 	if err != nil {
-		l.logger.Printf("Get (%d) miss %v", key, err)
+		l.logger.Printf("Get (%v) miss %v", key, err)
 	} else {
-		l.logger.Printf("Get (%d) hit",key)
+		l.logger.Printf("Get (%v) hit",key)
 	}
 	return val, err
 }
