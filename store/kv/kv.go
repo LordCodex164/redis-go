@@ -15,12 +15,10 @@ type Store struct {
 	maxSize int
 }
 
-
 func (s *Store) Keys() []string {
 	//here we create an emoty slice with the capacity of the length of our data
 	keys := make([]string, 0, len(s.data))
 	//sort the keys auto
-
 	for k, _ := range s.data {
 		keys = append(keys, k)
 	}
@@ -55,7 +53,7 @@ func (s *Store) Set(key, value string) error {
 
 	//we are at capacity and is this a new key
 	if s.maxSize > 0 && s.Len() >= s.maxSize && !exists {
-		return fmt.Errorf("Set Key: (%s) - %w, key, limit exceeded", key, value)
+		return fmt.Errorf("Set Key: (%s) - %v, key, limit exceeded", key, value)
 	}
 	s.data[key] = value
 	return nil
@@ -80,7 +78,7 @@ func (s *Store) Delete(key string) *Store {
 }
 
 func (s *Store) Len() (int) {
-	return len(s.data)	
+	return len(s.data)
 }
 
 func (s *Store) SetKeyWithEncryption(key, val string) (string, error) {
@@ -96,9 +94,22 @@ func NewStore(maxSize int) *Store {
 	fmt.Println("GoKV - Go key value store project", maxSize)
 
 	s := Store{
-		data: map[string]string{},
+		data: make(map[string]string),
 		maxSize: maxSize,
 	}
 	
 	return &s
+}
+
+func (s *Store) Clone() *Store {
+	cl := &Store{
+		data: make(map[string]string, len(s.data)),
+		maxSize: s.maxSize,
+	}
+
+	for k, v := range cl.data {
+		fmt.Println("k", k, "v", v)
+		cl.data[k] = v
+	}
+	return cl
 }

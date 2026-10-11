@@ -18,6 +18,16 @@ func main() {
 
 	s, m := CreateStore()
 
+	original := kv.NewStore(2)
+	
+	PopulateWordsWithDefault(original)
+
+	fmt.Println("or", original)
+
+	cl := original.Clone()
+
+	fmt.Println("cl", cl)
+
 	s.Set("social", "x")
 	m.Set("social", "x")
 	s.Set("meal", "rice")
@@ -62,3 +72,14 @@ func SetKeyWithEncryption(store Store.IStore, key, val string) (string, error) {
 	return store.Get(key)
 }
 
+func PopulateWordsWithDefault(storer Store.IStore) {
+	defaults := map[string]string{
+		"env": "dev",
+		"version": "2.1.0",
+		"debug": "true",
+	}
+
+	for k, v := range(defaults) {
+		storer.Set(k, v)
+	}
+}
