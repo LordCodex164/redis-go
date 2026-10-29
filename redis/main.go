@@ -50,9 +50,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
 	fmt.Println(encrypted)
-
 	m.Report()
 }
 
@@ -78,7 +76,6 @@ func PopulateWordsWithDefault(storer Store.IStore) {
 		"version": "2.1.0",
 		"debug": "true",
 	}
-
 	for k, v := range(defaults) {
 		storer.Set(k, v)
 	}

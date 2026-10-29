@@ -34,7 +34,6 @@ func (s *Store) Rename(oldKey, newKey string) {
 }
 
 func (s *Store) Pop(key string) (string, bool) {
-
 	value, exists := s.data[key]
 	delete(s.data, key)
 	if exists {
@@ -102,13 +101,21 @@ func NewStore(maxSize int) *Store {
 }
 
 func (s *Store) Clone() *Store {
-	cl := &Store{
-		data: make(map[string]string, len(s.data)),
-		maxSize: s.maxSize,
-	}
+	// cl := &Store{
+	// 	data: make(map[string]string, len(s.data)),
+	// 	maxSize: s.maxSize,
+	// }
 
+	// for k, v := range cl.data {
+	// 	cl.data[k] = v
+	// }
+	// return cl
+
+	cl := &Store{
+		maxSize: s.maxSize,
+		data: make(map[string]string, len(s.data)),
+	}
 	for k, v := range cl.data {
-		fmt.Println("k", k, "v", v)
 		cl.data[k] = v
 	}
 	return cl
